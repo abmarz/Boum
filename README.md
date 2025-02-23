@@ -24,5 +24,5 @@ Little did they know that this would spark the transformation of their small coa
 | `break`  | `print`  |
 | `let x = 10`  | `saw x = 10`  |
 | `console.log("Hala!")`  | `gool("Hala!")`  |
-| `console.log(x + 10 > 5)`  | `Sij(x + 10 > 10)`  |
+| `console.log(x + 10 > 5)`  | `sij(x + 10 akbar min 10)`  |
 | `if (a > b)` | `etha(a akbar min b)` |
