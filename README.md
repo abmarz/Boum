@@ -1,5 +1,5 @@
 # Boum
-![alt text](https://github.com/abmarz/Boum/blob/main/docs/Boum%20Logo%20Final.jpg?raw=true)
+![alt text](https://github.com/abmarz/Boum/blob/main/docs/Boum%20Logo.png?raw=true)
 
 *We put a lot of thought into this logo's design. Allow us to break it down. The left sail represents our ancestors, whose legacy propels us forward. The right sail symbolizes our future, shaped by their influence. The left sail is smaller and incomplete, reflecting the uncertainty of the past. In contrast, the right sail is a larger and full version of the left, representing the promise and potential of our future.*
 
