@@ -9,7 +9,7 @@ Three centuries ago amid the deserts of Arabia, a large group of families decide
 
 This collection of families worked together to establish and foster a beautiful community, entrenched in a beautiful culture woven with the fabrics of faith, family, and tradition. On the other side of the shore was a whole new world (cue the Aladdin reference). Seizing this opportunity of a new world, some among them crafted a vessel known as the "Boum" and sailed into the Indian Ocean, forging new trade routes bridging their newfound home to the rest of the world. Consequently, trade grew and made merchants of the former migrants and in effect created a new economy within this land. 
 
-Little did they know that this would spark the transformation of their small coastal community into a global powerhouse known as Kuwait. All because of God’s will, then a single vessel: Al-Boum. Today, Kuwait’s prosperity empowers its youth through education, sending students abroad to pursue knowledge, students like us (Abdullah and Ali). So, when presented with an opportunitty to create a new programming language, it was only fitting to pay homage to the vessel that brought us here so without further ado, we present Boum.
+Little did they know that this would spark the transformation of their small coastal community into a global oil powerhouse known as Kuwait. All because of God’s will, then a single vessel: Al-Boum. Today, Kuwait’s prosperity empowers its youth through education, sending students abroad to pursue knowledge, students like us (Abdullah and Ali). So, when presented with an opportunitty to create a new programming language, it was only fitting to pay homage to the vessel that brought us here so without further ado, we present Boum.
 
 
 # Features
