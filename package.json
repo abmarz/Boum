@@ -1,0 +1,16 @@
+{
+  "name": "boum",
+  "version": "1.0.0",
+  "description": "add logo image here",
+  "type": "module",
+  "main": "src/boum.js",
+  "scripts": {
+    "test": "c8 node --test test/**/*.test.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "c8": "^10.1.3"
+  }
+}
