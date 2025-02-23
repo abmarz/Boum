@@ -25,4 +25,4 @@ Little did they know that this would spark the transformation of their small coa
 | `let x = 10`  | `saw x = 10`  |
 | `console.log("Hala!")`  | `gool("Hala!")`  |
 | `console.log(x + 10 > 5)`  | `Sij(x + 10 > 10)`  |
-| ```js if (a > b) { console.log('a is bigger than b');  } | ```js etha(a akbar min b) gool("a akbar min b")
+| `if (a > b)` | `etha(a akbar min b)` |
