@@ -1,0 +1,66 @@
+Boum {
+  Program = Stmt+
+  
+  Stmt    	 = PrintStmt
+  		  	 | VarDec
+             | AssignStmt
+          	 | WhileStmt
+          	 | FunDec
+          	 | ReturnStmt
+  
+  PrintStmt  = print "(" Exp ")"
+  AssignStmt = Var "=" Exp
+  VarDec 	 = let id "=" Exp
+  WhileStmt  = while Exp ":"
+  FunDec 	 = function id Params ReturnType? ":"
+  ReturnType = "->" Type
+  ReturnStmt = return Exp?
+  
+  Params 	 = "(" ListOf<Param, ","> ")"
+  Param 	 = id ":" Type
+  Type 	 	 = Type "[]" 							--array
+  	   	 	 | id
+  
+  Exp 		 = Condition relop Condition 			--binary
+      		 | Condition
+  	  
+  Condition  = Exp ("+"|"-") Term 					--binary
+  	  		 | Term
+  
+  Term 		 = Term ("*"|"/"|"%") Factor 			--binary
+  	   		 | Factor
+  Factor 	 = Primary "**" Factor     				--binary
+             | "-" Primary                          --negation
+  	     	 | Primary
+  Primary 	 = Call
+  		  	 | Var
+  	      	 | num
+          	 | strlit
+             | true
+             | false
+          	 | "[" ListOf<Exp, ","> "]" 			--array
+             | "(" Exp ")"                          --parens
+  
+  Var 	 	 = Var "[" Exp "]" 						--subscript
+  	  	  	 | id                                   --id
+  
+  Call 	  	 = id "(" ListOf<Exp, ","> ")"
+
+  print   	 = "insa5" ~idchar | "ensa5" ~idchar
+  let     	 = "5al" ~idchar
+  while   	 = "6alama" ~idchar
+  function	 = "dala" ~idchar
+  return 	 = "rd" ~idchar | "rid" ~idchar
+  true   	 = "true" ~idchar
+  false 	 = "false" ~idchar
+  
+  keyword 	 = print | let | while | function | return | true | false
+  
+  num 		 = digit+ ("." digit+)? (("E"|"e") ("+"|"-")? digit+)?
+  strlit	 = "\"" char* "\""
+  char 		 = ~"\n" ~"\"" any
+  id 		 = ~keyword letter idchar*
+  idchar 	 = letter | digit | "_"
+  relop 	 = "<="|"<"|"=="|"!="|">="|">"
+      
+}
