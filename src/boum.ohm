@@ -41,7 +41,7 @@ Boum {
           	 | "[" ListOf<Exp, ","> "]" 			--array
              | "(" Exp ")"                          --parens
   
-  Var 	 	 = Var "[" Exp "]" 						--subscript
+  Var 	 	 = Var "[" Exp "]" 						     --subscript
   	  	  	 | id                                   --id
   
   Call 	  	 = id "(" ListOf<Exp, ","> ")"
@@ -50,9 +50,9 @@ Boum {
   let     	 = "5al" ~idchar
   while   	 = "6alama" ~idchar
   function	 = "dala" ~idchar
-  return 	 = "rd" ~idchar | "rid" ~idchar
-  true   	 = "true" ~idchar
-  false 	 = "false" ~idchar
+  return 	   = "rd" ~idchar | "rid" ~idchar
+  true   	   = "true" ~idchar
+  false 	   = "false" ~idchar
   
   keyword 	 = print | let | while | function | return | true | false
   
