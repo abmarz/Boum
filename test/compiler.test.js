@@ -4,6 +4,6 @@ import compile from "../src/compiler.js";
 
 describe("The compiler", () => {
   it("is alive", () => {
-    assert.equal(compile('print "Hello'), "it works");
+    assert.equal(compile('ensa5("Hello")', "parsed"), "Syntax is ok");
   });
 });

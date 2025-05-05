@@ -3,7 +3,7 @@ import * as core from "../src/core.js";
 export default function analyzer(match) {
   const analyzer = match.matcher.grammar.createSemantics().addOperation("rep", {
     Program(stmts) {
-      return new core.Program([stmts.children.map((s) => s.rep())]);
+      return new core.Program(stmts.children.map((s) => s.rep()));
     },
     PrintStmt(_print, _open, exp, _close) {
       return new core.PrintStmt(exp.rep());
