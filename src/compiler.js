@@ -1,7 +1,7 @@
-import analyze from "./analyzer.js";
-import generate from "./generator.js";
-import optimize from "./optimizer.js";
-import parse from "./parser.js";
+import analyze from "../src/analyzer.js";
+import generate from "../src/generator.js";
+import optimize from "../src/optimizer.js";
+import parse from "../src/parser.js";
 
 export default function compile(source, outputType) {
   if (!["parsed", "analyzed", "optimized", "js"].includes(outputType)) {
