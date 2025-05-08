@@ -2,17 +2,19 @@ Boum {
   Program = Stmt+
   
   Stmt    	 = PrintStmt
-  		  	 | VarDec
+  		  	   | VarDec
              | AssignStmt
           	 | WhileStmt
           	 | FunDec
           	 | ReturnStmt
+             | Block
   
   PrintStmt  = print "(" Exp ")"
   AssignStmt = Var "=" Exp
   VarDec 	 = let id "=" Exp
-  WhileStmt  = while Exp ":"
-  FunDec 	 = function id Params ReturnType? ":"
+  WhileStmt = while Exp ":" Block
+  Block = "(" Stmt+ ")"
+  FunDec = function id Params ReturnType? ":" Block
   ReturnType = "->" Type
   ReturnStmt = return Exp?
   
@@ -29,17 +31,21 @@ Boum {
   
   Term 		 = Term ("*"|"/"|"%") Factor 			--binary
   	   		 | Factor
-  Factor 	 = Primary "**" Factor     				--binary
-             | "-" Primary                          --negation
-  	     	 | Primary
-  Primary 	 = Call
-  		  	 | Var
-  	      	 | num
-          	 | strlit
-             | true
-             | false
-          	 | "[" ListOf<Exp, ","> "]" 			--array
-             | "(" Exp ")"                          --parens
+  Factor = Primary "**" Factor     --binary
+       | ("!" | "-") Factor      --unary
+       | Primary
+
+Primary = Call
+        | Var
+        | Primary "[" Exp "]"     --subscript
+        | ArrayLiteral
+        | num
+        | strlit
+        | "true"                  --true
+        | "false"                 --false
+        | "(" Exp ")"            --paren
+
+ArrayLiteral = "[" ListOf<Exp, ","> "]"
   
   Var 	 	 = Var "[" Exp "]" 						     --subscript
   	  	  	 | id                                   --id
@@ -50,7 +56,7 @@ Boum {
   let     	 = "5al" ~idchar
   while   	 = "6alama" ~idchar
   function	 = "dala" ~idchar
-  return 	   = "rd" ~idchar | "rid" ~idchar
+  return     = "rd" | "rid"
   true   	   = "true" ~idchar
   false 	   = "false" ~idchar
   

@@ -1,126 +1,199 @@
+import * as fs from "node:fs";
+import * as ohm from "ohm-js";
 import * as core from "../src/core.js";
 
-export default function analyzer(match) {
-  const analyzer = match.matcher.grammar.createSemantics().addOperation("rep", {
-    Program(stmts) {
-      return new core.Program(stmts.children.map((s) => s.rep()));
-    },
-    PrintStmt(_print, _open, exp, _close) {
-      return new core.PrintStmt(exp.rep());
-    },
+// Load the grammar
+const grammar = ohm.grammar(fs.readFileSync("src/boum.ohm"));
 
-    AssignStmt(variable, _eq, exp) {
-      const target = variable.rep();
-      const source = exp.rep();
-      return new core.AssignStmt(target, source);
-    },
+// Write out Analyzer
+export default function analyze(match) {
+  const scopes = [new Map()]; // top is current scoope
+  function declare(name) {
+    const current = scopes[scopes.length - 1];
+    if (current.has(name)) {
+      throw new Error(`${name} already declared in this scope`);
+    }
+    current.set(name, true);
+  }
 
-    VarDec(_let, id, _eq, exp) {
-      const variable = id.sourceString;
-      const initializer = exp.rep();
-      return new core.VarDec(variable, initializer);
-    },
+  function isDeclared(name) {
+    return scopes.some((scope) => scope.has(name));
+  }
+  const semantics = match.matcher.grammar
+    .createSemantics()
+    .addOperation("rep", {
+      Program(statements) {
+        return new core.Program(statements.children.map((s) => s.rep()));
+      },
 
-    WhileStmt(_while, exp, _semi) {
-      const test = exp.rep();
-      return new core.WhileStmt(test); // might need to add a body
-    },
+      VarDec(_let, id, _eq, exp) {
+        const name = id.sourceString;
+        declare(name);
+        return new core.VarDec(new core.Variable(name, null), exp.rep());
+      },
 
-    FunDec(_fun, id, params, type, colon) {
-      // here
-      const name = id.sourceString;
-      const returnType = type.rep();
-      const parameters = params.children.map((p) => p.rep());
-      return new core.FunDec(name, parameters, returnType);
-    },
+      PrintStmt(_print, _open, exp, _close) {
+        return new core.PrintStmt(exp.rep());
+      },
 
-    // should I do returnType from my ohm? if so it would be ReturnType(_arrow, type)
-    ReturnStmt(_return, exps) {
-      const expression = exps.rep();
-      return new core.ReturnStmt(expression);
-    },
+      AssignStmt(id, _eq, exp) {
+        const name = id.sourceString;
+        if (!isDeclared(name)) {
+          throw new Error(`${name} has not been declared`);
+        }
+        return new core.AssignStmt(new core.Variable(name, null), exp.rep());
+      },
 
-    Params(_open, params, _close) {
-      const parameters = params.children.map((p) => p.rep());
-      return new core.Fun(parameters);
-    },
+      Block(_open, stmts, _close) {
+        scopes.push(new Map()); // eter new scope
+        const body = stmts.children.map((s) => s.rep());
+        scopes.pop(); // exit scope
+        return body;
+      },
 
-    Param(id, _colon, type) {
-      const name = id.sourceString;
-      const paramType = type.rep();
-      return new core.Variable(name, paramType);
-    },
+      WhileStmt(_while, test, _colon, block) {
+        return new core.WhileStmt(test.rep(), block.rep());
+      },
 
-    Type_array(type, _brackets) {
-      const baseType = type.rep();
-      return new core.ArrayType(baseType);
-    },
+      Exp_binary(left, op, right) {
+        return new core.BinaryExp(
+          op.sourceString,
+          left.rep(),
+          right.rep(),
+          null
+        );
+      },
 
-    Exp_binary(cond1, relop, cond2) {
-      const left = cond1.rep();
-      operator = relop.sourceString;
-      const right = cond2.rep();
-      return new core.BinaryExp(left, operator, right);
-    },
+      Term_binary(left, op, right) {
+        return new core.BinaryExp(
+          op.sourceString,
+          left.rep(),
+          right.rep(),
+          null
+        );
+      },
 
-    Condition_binary(cond, op, term) {
-      const left = cond.rep();
-      operator = op.sourceString;
-      const right = term.rep();
-      return new core.BinaryExp(left, operator, right);
-    },
+      Factor_binary(left, _op, right) {
+        return new core.BinaryExp("**", left.rep(), right.rep(), null);
+      },
 
-    Term_binary(term, op, factor) {
-      const left = term.rep();
-      operator = op.sourceString;
-      const right = factor.rep();
-      return new core.BinaryExp(left, operator, right);
-    },
+      Factor_unary(op, expr) {
+        return new core.UnaryExp(op.sourceString, expr.rep(), null);
+      },
 
-    Factor_binary(primary, op, factor) {
-      const left = primary.rep();
-      operator = op.sourceString;
-      const right = factor.rep();
-      return new core.BinaryExp(left, operator, right);
-    },
+      Var_id(id) {
+        const name = id.sourceString;
+        if (!isDeclared(name)) {
+          throw new Error(`${name} has not been declared`);
+        }
+        return new core.Variable(name, null);
+      },
 
-    Factor_negation(op, primary) {
-      const left = primary.rep();
-      operator = op.sourceString;
-      return new core.UnaryExp(operator, left);
-    },
+      num(_int, _dot, _frac, _e, _sign, _exp) {
+        return Number(this.sourceString);
+      },
 
-    Var_subscript(variable, _open, exp, _close) {
-      const subscript = exp.rep();
-      return new core.SubscriptExp(variable, subscript);
-    },
+      strlit(_open, chars, _close) {
+        return this.sourceString.slice(1, -1);
+      },
 
-    Var_id(id) {
-      return id.sourceString;
-    },
+      true(_) {
+        return true;
+      },
 
-    Call(id, _open, exps, _close) {
-      // here
-      const args = exps.children.map((e) => e.rep());
-      return new core.Call(id.sourceString, args);
-    },
+      false(_) {
+        return false;
+      },
 
-    num(_int, _dot, _frac, _e, _sign, _exp) {
-      return Number(this.sourceString);
-    },
+      Primary_true(_token) {
+        return true;
+      },
 
-    strlit(_open, chars, _close) {
-      return this.sourceString;
-    },
+      Primary_false(fl) {
+        return fl.rep();
+      },
 
-    true(_) {
-      return true;
-    },
+      Primary_paren(_open, exp, _close) {
+        return exp.rep();
+      },
 
-    false(_) {
-      return false;
-    },
-  });
+      _terminal() {
+        return this.sourceString;
+      },
 
-  return analyzer(match).rep();
+      FunDec(_fun, id, params, returnTypeOpt, _colon, block) {
+        const name = id.sourceString;
+        const paramList = params.rep();
+        const retType =
+          returnTypeOpt.children.length === 0
+            ? new core.BasicType("void")
+            : returnTypeOpt.children[0].rep();
+        const fun = new core.Fun(name, paramList, retType);
+        return new core.FunDec(fun, block.rep());
+      },
+
+      Params(_open, paramList, _close) {
+        return paramList.asIteration().children.map((p) => p.rep());
+      },
+
+      Param(id, _colon, type) {
+        return new core.Variable(id.sourceString, type.rep());
+      },
+
+      Type_array(inner, _brackets) {
+        return new core.ArrayType(inner.rep());
+      },
+
+      Type(id) {
+        return new core.BasicType(id.sourceString);
+      },
+
+      ReturnStmt(_ret, expOpt) {
+        if (expOpt.children.length === 0) {
+          return new core.ReturnStmt(null);
+        }
+        return new core.ReturnStmt(expOpt.children[0].rep());
+      },
+
+      ReturnType(_arrow, type) {
+        return type.rep();
+      },
+
+      Condition_binary(left, op, right) {
+        return new core.BinaryExp(
+          op.sourceString,
+          left.rep(),
+          right.rep(),
+          null
+        );
+      },
+
+      Exp_binary(left, op, right) {
+        return new core.BinaryExp(
+          op.sourceString,
+          left.rep(),
+          right.rep(),
+          null
+        );
+      },
+
+      Term_binary(left, op, right) {
+        return new core.BinaryExp(
+          op.sourceString,
+          left.rep(),
+          right.rep(),
+          null
+        );
+      },
+
+      Factor_binary(left, _op, right) {
+        return new core.BinaryExp("**", left.rep(), right.rep(), null);
+      },
+
+      Factor_unary(op, expr) {
+        return new core.UnaryExp(op.sourceString, expr.rep(), null);
+      },
+    });
+
+  return semantics(match).rep();
 }
