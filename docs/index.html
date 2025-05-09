@@ -2,23 +2,43 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <title>My GitHub Pages Site</title>
+    <title>Boum Project</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap"
+      rel="stylesheet"
+    />
     <style>
-      body,
-      html {
+      * {
         margin: 0;
         padding: 0;
-        height: 100%;
-        font-family: Arial, sans-serif;
+        box-sizing: border-box;
+      }
+
+      body,
+      html {
+        font-family: "Poppins", sans-serif;
+        scroll-behavior: smooth;
+        background-color: #111;
+        color: white;
       }
 
       .bg {
         background-image: url("https://github.com/abmarz/Boum/blob/main/docs/boum1.jpg");
-        height: 100%;
         background-size: cover;
         background-position: center;
+        height: 100vh;
         position: relative;
-        color: white;
+      }
+
+      .bg::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: rgba(0, 0, 0, 0.45);
+        z-index: 1;
       }
 
       .overlay-text {
@@ -27,28 +47,225 @@
         left: 50%;
         transform: translate(-50%, -50%);
         text-align: center;
-        background-color: rgba(0, 0, 0, 0.5);
-        padding: 20px;
-        border-radius: 8px;
+        z-index: 2;
+        padding: 30px 40px;
       }
 
-      h1 {
-        margin: 0;
-        font-size: 2.5em;
+      .overlay-text h1 {
+        font-size: 2.8em;
+        margin-bottom: 10px;
+        font-weight: 600;
       }
 
-      p {
-        margin-top: 10px;
+      .overlay-text p {
         font-size: 1.2em;
+        margin-bottom: 20px;
+      }
+
+      .button {
+        display: inline-block;
+        padding: 12px 24px;
+        background: #ffffff;
+        color: #111;
+        text-decoration: none;
+        font-weight: 600;
+        border-radius: 5px;
+        transition: background 0.3s;
+      }
+
+      .button:hover {
+        background: #dddddd;
+      }
+
+      .content {
+        padding: 60px 20px;
+        max-width: 800px;
+        margin: auto;
+        z-index: 2;
+        position: relative;
+      }
+
+      .content h2 {
+        margin-bottom: 10px;
+        font-size: 1.8em;
+        color: white;
+      }
+
+      .content p {
+        margin-bottom: 20px;
+        line-height: 1.6;
+        color: white;
+      }
+
+      .about-flex {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 20px;
+      }
+
+      .about-text {
+        flex: 1;
+        min-width: 250px;
+      }
+
+      .about-logo {
+        width: 150px;
+        opacity: 100;
+        border-radius: 20px;
+      }
+
+      .tab-container {
+        background: #1e1e1e;
+        border-radius: 8px;
+        overflow: hidden;
+        margin-top: 20px;
+        font-family: monospace;
+        position: relative;
+      }
+
+      .tabs {
+        display: flex;
+        background: #111;
+      }
+
+      .tab-button {
+        flex: 1;
+        padding: 10px;
+        background: none;
+        border: none;
+        color: white;
+        cursor: pointer;
+        font-weight: bold;
+        transition: background 0.3s;
+      }
+
+      .tab-button:hover,
+      .tab-button.active {
+        background: #333;
+      }
+
+      .tab-content {
+        padding: 15px;
+        background: #ffffff;
+        color: #111;
+        white-space: pre-wrap;
+        display: none;
+        border-radius: 6px;
+        position: relative;
+      }
+
+      .tab-content.active {
+        display: block;
+      }
+
+      .logo-in-code {
+        position: absolute;
+        top: 6px;
+        right: 21px;
+        width: 45px;
+        height: auto;
+        opacity: 0.85;
+        z-index: 10;
       }
     </style>
   </head>
   <body>
     <div class="bg">
       <div class="overlay-text">
-        <h1>Welcome to My Site</h1>
-        <p>This image is the background</p>
+        <h1>Boum Language Project</h1>
+        <p>A clean, minimal compiler demo with custom syntax.</p>
+        <a href="#about" class="button">Scroll Down to Learn More ↓</a>
       </div>
     </div>
+
+    <div class="content" id="about">
+      <div class="about-flex">
+        <div class="about-text">
+          <h2>📖 About Boum</h2>
+          <p>
+            <strong>Boum</strong> is a minimalist programming language designed
+            to help students understand how compilers work. It features its own
+            syntax, parser, semantic analyzer, and interpreter, all built using
+            JavaScript and Ohm-JS.
+          </p>
+          <p>
+            The goal is to keep the language readable and the architecture
+            understandable, making it ideal for exploring concepts like grammar,
+            scope, type checking, and execution flow.
+          </p>
+        </div>
+        <img
+          src="https://github.com/abmarz/Boum/raw/main/docs/Boum%20Logo.png"
+          alt="Boum Logo"
+          class="about-logo"
+        />
+      </div>
+    </div>
+
+    <div class="content" id="bios">
+      <h2>👨‍💻 Developer Bios</h2>
+      <p>
+        <strong>Abdullah Al Marzouq</strong> – Hey, I'm Abdullah. I'm a CS major
+        at LMU and my favorite language is Python. It helped me get ove rmy
+        imposter syndrome when I started university, which is why a lot of our
+        syntax-style for Boum is similar to Python (no offense Carlos).
+      </p>
+      <p>
+        <strong>Ali Al Aryan</strong> – Hey I'm Ali. I'm also a CS major at LMU
+        and my favorite language is also Python. Which is why when Abdullah
+        wanted to do something Python-esque I was on board instantly. You may
+        find some JS nibbles here and there but oh well, that's the Ohm tax I
+        guess.
+      </p>
+
+      <h2>💡 Code Example</h2>
+      <div class="tab-container">
+        <div class="tabs">
+          <button class="tab-button active" onclick="showTab(event, 'code')">
+            Code
+          </button>
+          <button class="tab-button" onclick="showTab(event, 'output')">
+            Output
+          </button>
+        </div>
+
+        <div class="tab-content active" id="code">
+          <img
+            src="https://github.com/abmarz/Boum/raw/main/docs/Boum%20Logo.png"
+            class="logo-in-code"
+            alt="Boum logo"
+          />
+          <pre><code>5al x = 5
+6alama x > 0: (
+  print(x)
+  x = x - 1
+  )
+</code></pre>
+        </div>
+
+        <div class="tab-content" id="output">
+          <pre><code>5
+4
+3
+2
+1
+</code></pre>
+        </div>
+      </div>
+    </div>
+    <script>
+      function showTab(event, tabId) {
+        document
+          .querySelectorAll(".tab-content")
+          .forEach((el) => el.classList.remove("active"));
+        document
+          .querySelectorAll(".tab-button")
+          .forEach((btn) => btn.classList.remove("active"));
+        document.getElementById(tabId).classList.add("active");
+        event.target.classList.add("active");
+      }
+    </script>
   </body>
 </html>
