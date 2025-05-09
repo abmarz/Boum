@@ -111,9 +111,9 @@
       }
 
       .about-logo {
-        width: 150px;
+        width: 250px;
         opacity: 100;
-        border-radius: 20px;
+        border-radius: 30px;
       }
 
       .tab-container {
@@ -188,12 +188,9 @@
             <strong>Boum</strong> is a minimalist programming language designed
             to help students understand how compilers work. It features its own
             syntax, parser, semantic analyzer, and interpreter, all built using
-            JavaScript and Ohm-JS.
-          </p>
-          <p>
-            The goal is to keep the language readable and the architecture
-            understandable, making it ideal for exploring concepts like grammar,
-            scope, type checking, and execution flow.
+            JavaScript and Ohm-JS. The goal is to keep the language readable and
+            the architecture understandable, making it ideal for exploring
+            concepts like grammar, scope, type checking, and execution flow.
           </p>
         </div>
         <img
@@ -221,49 +218,109 @@
       </p>
 
       <h2>💡 Code Example</h2>
-      <div class="tab-container">
-        <div class="tabs">
-          <button class="tab-button active" onclick="showTab(event, 'code')">
-            Code
-          </button>
-          <button class="tab-button" onclick="showTab(event, 'output')">
-            Output
-          </button>
-        </div>
 
-        <div class="tab-content active" id="code">
-          <img
-            src="https://github.com/abmarz/Boum/raw/main/docs/Boum%20Logo.png"
-            class="logo-in-code"
-            alt="Boum logo"
-          />
-          <pre><code>5al x = 5
+<div class="tab-container">
+  <div class="tabs">
+    <button class="tab-button active" onclick="showTab(event, 'code1')">Code</button>
+    <button class="tab-button" onclick="showTab(event, 'output1')">Output</button>
+  </div>
+  <div class="tab-content active" id="code1">
+    <img src="https://github.com/abmarz/Boum/raw/main/docs/Boum%20Logo.png" class="logo-in-code" alt="Boum logo" />
+<pre><code>5al x = 5
 6alama x > 0: (
-  print(x)
+  ensa5(x)
   x = x - 1
-  )
-</code></pre>
-        </div>
-
-        <div class="tab-content" id="output">
-          <pre><code>5
+  )</code></pre>
+  </div>
+  <div class="tab-content" id="output1">
+    <img src="https://github.com/abmarz/Boum/raw/main/docs/Boum%20Logo.png" class="logo-in-code" alt="Boum logo" />
+<pre><code>5
 4
 3
 2
-1
+1</code></pre>
+  </div>
+</div>
+
+<div class="tab-container">
+  <div class="tabs">
+    <button class="tab-button active" onclick="showTab(event, 'code2')">Code</button>
+    <button class="tab-button" onclick="showTab(event, 'output2')">Output</button>
+  </div>
+  <div class="tab-content active" id="code2">
+    <img src="https://github.com/abmarz/Boum/raw/main/docs/Boum%20Logo.png" class="logo-in-code" alt="Boum logo" />
+<pre><code>5al name = "Boum"
+ensa5("Hello, " + name)</code></pre>
+  </div>
+  <div class="tab-content" id="output2">
+    <img src="https://github.com/abmarz/Boum/raw/main/docs/Boum%20Logo.png" class="logo-in-code" alt="Boum logo" />
+<pre><code>Hello, Boum</code></pre>
+  </div>
+</div>
+
+<div class="tab-container">
+  <div class="tabs">
+    <button class="tab-button active" onclick="showTab(event, 'code3')">Code</button>
+    <button class="tab-button" onclick="showTab(event, 'output3')">Output</button>
+  </div>
+  <div class="tab-content active" id="code3">
+    <img src="https://github.com/abmarz/Boum/raw/main/docs/Boum%20Logo.png" class="logo-in-code" alt="Boum logo" />
+<pre><code>5al total = 15
+6alama total > 13: (
+  total = total + 1
+ensa5(total)
+)</code></pre>
+  </div>
+  <div class="tab-content" id="output3">
+    <img src="https://github.com/abmarz/Boum/raw/main/docs/Boum%20Logo.png" class="logo-in-code" alt="Boum logo" />
+<pre><code>17</code></pre>
+  </div>
+</div>
+
+<div class="tab-container">
+  <div class="tabs">
+    <button class="tab-button active" onclick="showTab(event, 'code4')">Code</button>
+    <button class="tab-button" onclick="showTab(event, 'output4')">Output</button>
+  </div>
+  <div class="tab-content active" id="code4">
+    <img src="https://github.com/abmarz/Boum/raw/main/docs/Boum%20Logo.png" class="logo-in-code" alt="Boum logo" />
+<pre><code>5al nums = [2, 4, 6]
+  ensa5(nums[1])</code></pre>
+  </div>
+  <div class="tab-content" id="output4">
+    <img src="https://github.com/abmarz/Boum/raw/main/docs/Boum%20Logo.png" class="logo-in-code" alt="Boum logo" />
+<pre><code>4
 </code></pre>
-        </div>
+  </div>
+</div>
+
+
+<div class="tab-container">
+  <div class="tabs">
+    <button class="tab-button active" onclick="showTab(event, 'code5')">Code</button>
+    <button class="tab-button" onclick="showTab(event, 'output5')">Output</button>
+  </div>
+  <div class="tab-content active" id="code5">
+    <img src="https://github.com/abmarz/Boum/raw/main/docs/Boum%20Logo.png" class="logo-in-code" alt="Boum logo" />
+<pre><code>dala greet(name): (
+  return "Hi " + name
+)
+
+ensa5(greet("Ali"))</code></pre>
+  </div>
+  <div class="tab-content" id="output5">
+    <img src="https://github.com/abmarz/Boum/raw/main/docs/Boum%20Logo.png" class="logo-in-code" alt="Boum logo" />
+<pre><code>Hi Ali</code></pre>
+  </div>
+</div>
       </div>
     </div>
     <script>
       function showTab(event, tabId) {
-        document
-          .querySelectorAll(".tab-content")
-          .forEach((el) => el.classList.remove("active"));
-        document
-          .querySelectorAll(".tab-button")
-          .forEach((btn) => btn.classList.remove("active"));
-        document.getElementById(tabId).classList.add("active");
+        const container = event.target.closest(".tab-container");
+        container.querySelectorAll(".tab-content").forEach(el => el.classList.remove("active"));
+        container.querySelectorAll(".tab-button").forEach(btn => btn.classList.remove("active"));
+        container.querySelector("#" + tabId).classList.add("active");
         event.target.classList.add("active");
       }
     </script>
