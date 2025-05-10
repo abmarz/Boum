@@ -7,18 +7,36 @@ const grammar = ohm.grammar(fs.readFileSync("src/boum.ohm"));
 
 // Write out Analyzer
 export default function analyze(match) {
-  const scopes = [new Map()]; // top is current scoope
-  function declare(name) {
+  const scopes = [new Map()];
+  const expectedReturnTypes = [];
+  const functions = new Map();
+  let currentFunctionReturnType = null;
+  const returnTypes = [];
+
+  function declare(name, type = new core.BasicType("any")) {
     const current = scopes[scopes.length - 1];
-    if (current.has(name)) {
+    const map = current.vars ?? current;
+    if (map.has(name)) {
       throw new Error(`${name} already declared in this scope`);
     }
-    current.set(name, true);
+    const variable = new core.Variable(name, type);
+    map.set(name, variable);
   }
 
   function isDeclared(name) {
-    return scopes.some((scope) => scope.has(name));
+    return scopes.some((scope) => (scope.vars ?? scope).has(name));
   }
+  function findVariable(name) {
+    for (let i = scopes.length - 1; i >= 0; i--) {
+      const scope = scopes[i];
+      const vars = scope.vars ?? scope;
+      if (vars.has(name)) {
+        return vars.get(name);
+      }
+    }
+    return null;
+  }
+
   const semantics = match.matcher.grammar
     .createSemantics()
     .addOperation("rep", {
@@ -28,8 +46,9 @@ export default function analyze(match) {
 
       VarDec(_let, id, _eq, exp) {
         const name = id.sourceString;
-        declare(name);
-        return new core.VarDec(new core.Variable(name, null), exp.rep());
+        const expr = exp.rep();
+        declare(name, expr.type);
+        return new core.VarDec(new core.Variable(name, expr.type), expr);
       },
 
       PrintStmt(_print, _open, exp, _close) {
@@ -55,46 +74,23 @@ export default function analyze(match) {
         return new core.WhileStmt(test.rep(), block.rep());
       },
 
-      Exp_binary(left, op, right) {
-        return new core.BinaryExp(
-          op.sourceString,
-          left.rep(),
-          right.rep(),
-          null
-        );
-      },
-
-      Term_binary(left, op, right) {
-        return new core.BinaryExp(
-          op.sourceString,
-          left.rep(),
-          right.rep(),
-          null
-        );
-      },
-
-      Factor_binary(left, _op, right) {
-        return new core.BinaryExp("**", left.rep(), right.rep(), null);
-      },
-
-      Factor_unary(op, expr) {
-        return new core.UnaryExp(op.sourceString, expr.rep(), null);
-      },
-
       Var_id(id) {
         const name = id.sourceString;
-        if (!isDeclared(name)) {
+        const variable = findVariable(name);
+        if (!variable) {
           throw new Error(`${name} has not been declared`);
         }
-        return new core.Variable(name, null);
+        return variable;
       },
 
       num(_int, _dot, _frac, _e, _sign, _exp) {
-        return Number(this.sourceString);
+        const value = Number(this.sourceString);
+        return Object.assign(value, { type: new core.BasicType("num") });
       },
 
       strlit(_open, chars, _close) {
-        return this.sourceString.slice(1, -1);
+        const value = this.sourceString.slice(1, -1);
+        return Object.assign(value, { type: new core.BasicType("str") });
       },
 
       true(_) {
@@ -106,11 +102,10 @@ export default function analyze(match) {
       },
 
       Primary_true(_token) {
-        return true;
+        return Object.assign(true, { type: new core.BasicType("bool") });
       },
-
-      Primary_false(fl) {
-        return fl.rep();
+      Primary_false(_token) {
+        return Object.assign(false, { type: new core.BasicType("bool") });
       },
 
       Primary_paren(_open, exp, _close) {
@@ -123,13 +118,42 @@ export default function analyze(match) {
 
       FunDec(_fun, id, params, returnTypeOpt, _colon, block) {
         const name = id.sourceString;
+        if (functions.has(name)) {
+          throw new Error(`Function ${name} already declared`);
+        }
+
         const paramList = params.rep();
         const retType =
           returnTypeOpt.children.length === 0
             ? new core.BasicType("void")
             : returnTypeOpt.children[0].rep();
+
         const fun = new core.Fun(name, paramList, retType);
-        return new core.FunDec(fun, block.rep());
+        functions.set(name, fun);
+        scopes.push({ function: fun, vars: new Map() });
+        for (const param of paramList) {
+          declare(param.name);
+        }
+        expectedReturnTypes.push(fun.returnType);
+        let returnFound = false;
+        const previousFunctionReturnType = currentFunctionReturnType;
+        currentFunctionReturnType = retType;
+        returnTypes.push(retType);
+        const body = block.rep();
+        returnTypes.pop();
+        currentFunctionReturnType = previousFunctionReturnType;
+        for (const stmt of body) {
+          if (stmt instanceof core.ReturnStmt) {
+            returnFound = true;
+            break;
+          }
+        }
+        expectedReturnTypes.pop();
+        scopes.pop();
+        if (fun.returnType.name !== "void" && !returnFound) {
+          throw new Error(`Function must return a ${fun.returnType.name}`);
+        }
+        return new core.FunDec(fun, body);
       },
 
       Params(_open, paramList, _close) {
@@ -149,49 +173,221 @@ export default function analyze(match) {
       },
 
       ReturnStmt(_ret, expOpt) {
+        if (returnTypes.length === 0) {
+          throw new Error("Return statement not inside a function");
+        }
+
+        const retType = returnTypes[returnTypes.length - 1];
+
         if (expOpt.children.length === 0) {
+          if (retType.name !== "void") {
+            throw new Error(`Function must return a ${retType.name}`);
+          }
           return new core.ReturnStmt(null);
         }
-        return new core.ReturnStmt(expOpt.children[0].rep());
+
+        const expr = expOpt.children[0].rep();
+
+        if (retType.name === "void") {
+          throw new Error("Void function should not return a value");
+        }
+
+        if (expr.type?.name && expr.type.name !== retType.name) {
+          throw new Error(
+            `Return type mismatch: expected ${retType.name} but got ${expr.type.name}`
+          );
+        }
+
+        return new core.ReturnStmt(expr);
       },
 
       ReturnType(_arrow, type) {
         return type.rep();
       },
 
-      Condition_binary(left, op, right) {
-        return new core.BinaryExp(
-          op.sourceString,
-          left.rep(),
-          right.rep(),
-          null
-        );
+      Exp_binary(left, op, right) {
+        const leftRep = left.rep();
+        const rightRep = right.rep();
+        const opStr = op.sourceString;
+
+        const leftType = leftRep.type?.name;
+        const rightType = rightRep.type?.name;
+
+        if (leftType !== rightType) {
+          throw new Error(
+            `Type mismatch in binary expression: ${leftType} ${opStr} ${rightType}`
+          );
+        }
+
+        const result = new core.BinaryExp(opStr, leftRep, rightRep, null);
+        result.type = new core.BasicType(leftType);
+        return result;
       },
 
-      Exp_binary(left, op, right) {
-        return new core.BinaryExp(
-          op.sourceString,
-          left.rep(),
-          right.rep(),
-          null
-        );
+      Condition_binary(left, op, right) {
+        const leftRep = left.rep();
+        const rightRep = right.rep();
+        const opStr = op.sourceString;
+
+        const leftType = leftRep.type?.name;
+        const rightType = rightRep.type?.name;
+
+        if (leftType !== rightType) {
+          throw new Error(
+            `Type mismatch in binary expression: ${leftType} ${opStr} ${rightType}`
+          );
+        }
+
+        const result = new core.BinaryExp(opStr, leftRep, rightRep, null);
+        result.type = new core.BasicType("bool");
+        return result;
       },
 
       Term_binary(left, op, right) {
-        return new core.BinaryExp(
-          op.sourceString,
-          left.rep(),
-          right.rep(),
-          null
-        );
+        const leftRep = left.rep();
+        const rightRep = right.rep();
+        const opStr = op.sourceString;
+
+        const leftType = leftRep.type?.name;
+        const rightType = rightRep.type?.name;
+
+        if (leftType !== rightType) {
+          throw new Error(
+            `Type mismatch in binary expression: ${leftType} ${opStr} ${rightType}`
+          );
+        }
+
+        if (leftType !== "num") {
+          throw new Error(
+            `Operator ${opStr} requires numeric operands, got ${leftType}`
+          );
+        }
+
+        const result = new core.BinaryExp(opStr, leftRep, rightRep, null);
+        result.type = new core.BasicType("num");
+        return result;
       },
 
       Factor_binary(left, _op, right) {
-        return new core.BinaryExp("**", left.rep(), right.rep(), null);
+        const leftRep = left.rep();
+        const rightRep = right.rep();
+
+        const leftType = leftRep.type?.name;
+        const rightType = rightRep.type?.name;
+
+        if (leftType !== rightType) {
+          throw new Error(
+            `Type mismatch in exponentiation: ${leftType} ** ${rightType}`
+          );
+        }
+
+        if (leftType !== "num") {
+          throw new Error("Exponentiation requires numeric operands");
+        }
+
+        const result = new core.BinaryExp("**", leftRep, rightRep, null);
+        result.type = new core.BasicType("num");
+        return result;
       },
 
       Factor_unary(op, expr) {
+        if (op.sourceString === "-" && expr.type?.name !== "num") {
+          throw new Error("Unary '-' requires a numeric operand");
+        }
+        if (op.sourceString === "!" && expr.type?.name !== "bool") {
+          throw new Error("Unary '!' requires a boolean operand");
+        }
         return new core.UnaryExp(op.sourceString, expr.rep(), null);
+      },
+
+      _iter(...children) {
+        return children.map((c) => c.rep());
+      },
+
+      Call(id, _open, args, _close) {
+        const name = id.sourceString;
+        if (!functions.has(name)) {
+          throw new Error(`Function ${name} not declared`);
+        }
+        const fun = functions.get(name);
+        const actualArgs = args.asIteration().children.map((arg) => arg.rep());
+
+        if (actualArgs.length !== fun.params.length) {
+          throw new Error(
+            `${name} expects ${fun.params.length} arguments but got ${actualArgs.length}`
+          );
+        }
+
+        for (let i = 0; i < actualArgs.length; i++) {
+          const expected = fun.params[i].type?.name;
+          const actual = actualArgs[i].type?.name;
+          if (expected && actual && expected !== actual) {
+            throw new Error(
+              `Argument ${
+                i + 1
+              } to ${name} must be ${expected} but got ${actual}`
+            );
+          }
+        }
+
+        return new core.Call(name, actualArgs);
+      },
+
+      CallStmt(call) {
+        return call.rep();
+      },
+
+      ArrayLiteral(_open, elements, _close) {
+        const values = elements.asIteration().children.map((e) => e.rep());
+
+        if (values.length === 0) {
+          throw new Error("Empty arrays are not allowed");
+        }
+
+        const elementType = values[0].type?.name;
+        for (const v of values) {
+          if (v.type?.name !== elementType) {
+            throw new Error("All elements in an array must have the same type");
+          }
+        }
+
+        const array = new core.ArrayExp(values);
+        array.type = new core.ArrayType(values[0].type);
+        return array;
+      },
+
+      Primary_subscript(arrayExpr, _open, indexExpr, _close) {
+        const array = arrayExpr.rep();
+        const index = indexExpr.rep();
+
+        if (!array.type || !(array.type instanceof core.ArrayType)) {
+          throw new Error("Only arrays can be subscripted");
+        }
+
+        if (index.type?.name !== "num") {
+          throw new Error("Array index must be a number");
+        }
+
+        return Object.assign(new core.SubscriptExp(array, index), {
+          type: array.type.baseType,
+        });
+      },
+
+      Var_subscript(base, _open, subscript, _close) {
+        const array = base.rep();
+        const index = subscript.rep();
+
+        if (!array.type || array.type.constructor.name !== "ArrayType") {
+          throw new Error("Only arrays can be subscripted");
+        }
+
+        if (!index.type || index.type.name !== "num") {
+          throw new Error("Array index must be a number");
+        }
+
+        const result = new core.SubscriptExp(array, index);
+        result.type = array.type.baseType;
+        return result;
       },
     });
 
