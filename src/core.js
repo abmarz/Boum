@@ -95,3 +95,10 @@ export class Call {
     Object.assign(this, { fun, args });
   }
 }
+
+export const booleanType = "boolean";
+export const intType = "int";
+export const floatType = "float";
+export const stringType = "string";
+export const voidType = "void";
+export const anyType = "any";

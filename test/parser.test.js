@@ -77,7 +77,7 @@ const syntaxErrors = [
   ["illegal let", `let x = 1`, /col 5/],
   ["unfinished math", `ensa5(3 + )`, /col 11/],
   ["unfinished expression", `ensa5(3 *`, /col 10/],
-  ["unfinished function call", `f(3,`, /col 2/],
+  ["unfinished function call", `dala f(3,`, /col 8/],
   //   ["non-boolean while", `6alama "yes":`, /col 8/], // here what if I said 6alama x > 2? Also not working
   ["array with trailing comma", `ensa5([1,2,])`, /col 12/],
   ["extra paren", `ensa5((3 + 4)) )`, /col 16/],

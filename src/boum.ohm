@@ -1,72 +1,75 @@
 Boum {
   Program = Stmt+
-  
-  Stmt    	 = PrintStmt
-  		  	   | VarDec
-             | AssignStmt
-          	 | WhileStmt
-          	 | FunDec
-          	 | ReturnStmt
-             | Block
-  
+
+  Stmt
+    = PrintStmt
+    | VarDec
+    | AssignStmt
+    | WhileStmt
+    | FunDec
+    | ReturnStmt
+    | Block
+    | CallStmt
+
   PrintStmt  = print "(" Exp ")"
   AssignStmt = Var "=" Exp
-  VarDec 	 = let id "=" Exp
-  WhileStmt = while Exp ":" Block
-  Block = "(" Stmt+ ")"
-  FunDec = function id Params ReturnType? ":" Block
+  VarDec     = let id "=" Exp
+  WhileStmt  = while Exp ":" Block
+  Block      = "(" Stmt+ ")"
+  FunDec     = function id Params ReturnType? ":" Block
   ReturnType = "->" Type
   ReturnStmt = return Exp?
-  
-  Params 	 = "(" ListOf<Param, ","> ")"
-  Param 	 = id ":" Type
-  Type 	 	 = Type "[]" 							--array
-  	   	 	 | id
-  
-  Exp 		 = Condition relop Condition 			--binary
-      		 | Condition
-  	  
-  Condition  = Exp ("+"|"-") Term 					--binary
-  	  		 | Term
-  
-  Term 		 = Term ("*"|"/"|"%") Factor 			--binary
-  	   		 | Factor
-  Factor = Primary "**" Factor     --binary
-       | ("!" | "-") Factor      --unary
-       | Primary
 
-Primary = Call
-        | Var
-        | Primary "[" Exp "]"     --subscript
-        | ArrayLiteral
-        | num
-        | strlit
-        | "true"                  --true
-        | "false"                 --false
-        | "(" Exp ")"            --paren
+  Params     = "(" ListOf<Param, ","> ")"
+  Param      = id ":" Type
+  Type       = Type "[]"                         --array
+             | id
 
-ArrayLiteral = "[" ListOf<Exp, ","> "]"
-  
-  Var 	 	 = Var "[" Exp "]" 						     --subscript
-  	  	  	 | id                                   --id
-  
-  Call 	  	 = id "(" ListOf<Exp, ","> ")"
+  Exp        = Condition relop Condition         --binary
+             | Condition
 
-  print   	 = "insa5" ~idchar | "ensa5" ~idchar
-  let     	 = "5al" ~idchar
-  while   	 = "6alama" ~idchar
-  function	 = "dala" ~idchar
+  Condition  = Exp ("+"|"-") Term                --binary
+             | Term
+
+  Term       = Term ("*"|"/"|"%") Factor         --binary
+             | Factor
+
+  Factor     = Primary "**" Factor               --binary
+             | ("!" | "-") Factor                --unary
+             | Primary
+
+  Primary    = Call
+             | Var
+             | Primary "[" Exp "]"               --subscript
+             | ArrayLiteral
+             | num
+             | strlit
+             | "true"                            --true
+             | "false"                           --false
+             | "(" Exp ")"                       --paren
+
+  ArrayLiteral = "[" ListOf<Exp, ","> "]"
+
+  Var        = Var "[" Exp "]"                   --subscript
+             | id                                --id
+
+  Call       = id "(" ListOf<Exp, ","> ")"
+  CallStmt   = Call
+
+  print      = "insa5" ~idchar | "ensa5" ~idchar
+  let        = "5al" ~idchar
+  while      = "6alama" ~idchar
+  function   = "dala" ~idchar
   return     = "rd" | "rid"
-  true   	   = "true" ~idchar
-  false 	   = "false" ~idchar
-  
-  keyword 	 = print | let | while | function | return | true | false
-  
-  num 		 = digit+ ("." digit+)? (("E"|"e") ("+"|"-")? digit+)?
-  strlit	 = "\"" char* "\""
-  char 		 = ~"\n" ~"\"" any
-  id 		 = ~keyword letter idchar*
-  idchar 	 = letter | digit | "_"
-  relop 	 = "<="|"<"|"=="|"!="|">="|">"
-      
+  true       = "true" ~idchar
+  false      = "false" ~idchar
+
+  keyword    = print | let | while | function | return | true | false
+
+  num        = digit+ ("." digit+)? (("E"|"e") ("+"|"-")? digit+)?
+  strlit     = "\"" char* "\""
+  char       = ~"\n" ~"\"" any
+  id         = ~keyword letter idchar*
+  idchar     = letter | digit | "_"
+  relop      = "<=" | "<" | "==" | "!=" | ">=" | ">"
 }
