@@ -16,11 +16,12 @@ export default function analyze(match) {
   function declare(name, type = new core.BasicType("any")) {
     const current = scopes[scopes.length - 1];
     const map = current.vars ?? current;
-    if (map.has(name)) {
+    if (map.has(name) && scopes.length > 2) {
       throw new Error(`${name} already declared in this scope`);
     }
     const variable = new core.Variable(name, type);
     map.set(name, variable);
+    return variable;
   }
 
   function isDeclared(name) {
@@ -220,7 +221,7 @@ export default function analyze(match) {
         }
 
         const result = new core.BinaryExp(opStr, leftRep, rightRep, null);
-        result.type = new core.BasicType(leftType);
+        result.type = new core.BasicType("bool");
         return result;
       },
 
@@ -239,7 +240,7 @@ export default function analyze(match) {
         }
 
         const result = new core.BinaryExp(opStr, leftRep, rightRep, null);
-        result.type = new core.BasicType("bool");
+        result.type = new core.BasicType("num");
         return result;
       },
 
@@ -290,14 +291,20 @@ export default function analyze(match) {
         return result;
       },
 
-      Factor_unary(op, expr) {
-        if (op.sourceString === "-" && expr.type?.name !== "num") {
+      Factor_unary(opNode, exprNode) {
+        const operand = exprNode.rep();
+        if (opNode.sourceString === "-" && operand.type?.name !== "num") {
           throw new Error("Unary '-' requires a numeric operand");
         }
-        if (op.sourceString === "!" && expr.type?.name !== "bool") {
+        if (opNode.sourceString === "!" && operand.type?.name !== "bool") {
           throw new Error("Unary '!' requires a boolean operand");
         }
-        return new core.UnaryExp(op.sourceString, expr.rep(), null);
+        const resultType =
+          opNode.sourceString === "-"
+            ? operand.type
+            : new core.BasicType("bool");
+
+        return new core.UnaryExp(opNode.sourceString, operand, resultType);
       },
 
       _iter(...children) {
@@ -393,3 +400,5 @@ export default function analyze(match) {
 
   return semantics(match).rep();
 }
+
+// AI help used in creating this optimizer. But mostly drawn from How to write a compiler (cs.lmu.edu/~ray/notes/)
