@@ -94,14 +94,6 @@ export default function analyze(match) {
         return Object.assign(value, { type: new core.BasicType("str") });
       },
 
-      true(_) {
-        return true;
-      },
-
-      false(_) {
-        return false;
-      },
-
       Primary_true(_token) {
         return Object.assign(true, { type: new core.BasicType("bool") });
       },
@@ -111,10 +103,6 @@ export default function analyze(match) {
 
       Primary_paren(_open, exp, _close) {
         return exp.rep();
-      },
-
-      _terminal() {
-        return this.sourceString;
       },
 
       FunDec(_fun, id, params, returnTypeOpt, _colon, block) {
@@ -133,7 +121,7 @@ export default function analyze(match) {
         functions.set(name, fun);
         scopes.push({ function: fun, vars: new Map() });
         for (const param of paramList) {
-          declare(param.name);
+          declare(param.name, param.type);
         }
         expectedReturnTypes.push(fun.returnType);
         let returnFound = false;
@@ -169,7 +157,7 @@ export default function analyze(match) {
         return new core.ArrayType(inner.rep());
       },
 
-      Type(id) {
+      Type_id(id) {
         return new core.BasicType(id.sourceString);
       },
 
@@ -307,10 +295,6 @@ export default function analyze(match) {
         return new core.UnaryExp(opNode.sourceString, operand, resultType);
       },
 
-      _iter(...children) {
-        return children.map((c) => c.rep());
-      },
-
       Call(id, _open, args, _close) {
         const name = id.sourceString;
         if (!functions.has(name)) {
@@ -338,10 +322,6 @@ export default function analyze(match) {
         }
 
         return new core.Call(name, actualArgs);
-      },
-
-      CallStmt(call) {
-        return call.rep();
       },
 
       ArrayLiteral(_open, elements, _close) {
@@ -401,4 +381,4 @@ export default function analyze(match) {
   return semantics(match).rep();
 }
 
-// AI help used in creating this optimizer. But mostly drawn from How to write a compiler (cs.lmu.edu/~ray/notes/)
+// Mostly drawn from How to write a compiler (cs.lmu.edu/~ray). Though some AI was used for troubleshooting and amplifying.

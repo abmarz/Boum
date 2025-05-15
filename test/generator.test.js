@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 import analyze from "../src/analyzer.js";
+import { PrintStmt, Program } from "../src/core.js";
 import generate from "../src/generator.js";
 import optimize from "../src/optimizer.js";
 import parse from "../src/parser.js";
@@ -239,6 +240,36 @@ const fixtures = [
       console.log(s_1);
     `,
   },
+  {
+    name: "number",
+    source: dedent`insa5(42)`,
+    expected: dedent`console.log(42);`,
+  },
+  {
+    name: "string",
+    source: dedent`insa5("hi")`,
+    expected: dedent`console.log("hi");`,
+  },
+  {
+    name: "boolean true",
+    source: dedent`insa5(true)`,
+    expected: dedent`console.log(true);`,
+  },
+  {
+    name: "boolean false",
+    source: dedent`insa5(false)`,
+    expected: dedent`console.log(false);`,
+  },
+  {
+    name: "parentheses",
+    source: dedent`insa5((1 + 2))`,
+    expected: dedent`console.log(1 + 2);`,
+  },
+  {
+    name: "exponent operator",
+    source: dedent`insa5(2 ** 3)`,
+    expected: dedent`console.log(2 ** 3);`,
+  },
 ];
 
 describe("The generator", () => {
@@ -251,4 +282,26 @@ describe("The generator", () => {
       assert.strictEqual(dedent(js), expected);
     });
   }
+
+  it("throws on unrecognized expression node", () => {
+    const badPrint = new PrintStmt({ foo: "bar" });
+    const badProg = new Program([badPrint]);
+    assert.throws(() => generate(badProg), /Unrecognized expression node/);
+  });
+
+  it("throws on unrecognized statement node", () => {
+    const badProg = new Program([{}]);
+    assert.throws(() => generate(badProg), /Unrecognized statement node/);
+  });
+  it("generates null literal", () => {
+    const prog = new Program([new PrintStmt(null)]);
+    const js = generate(prog);
+    assert.strictEqual(dedent(js), "console.log(null);");
+  });
+
+  it("generates undefined literal", () => {
+    const prog = new Program([new PrintStmt(undefined)]);
+    const js = generate(prog);
+    assert.strictEqual(dedent(js), "console.log(undefined);");
+  });
 });

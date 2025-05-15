@@ -19,9 +19,7 @@ export default function generate(program) {
     if (typeof node === "number" || node instanceof Number) {
       return node.valueOf().toString();
     }
-    if (typeof node === "bigint") {
-      return node.toString();
-    }
+
     if (typeof node === "boolean" || node instanceof Boolean) {
       return node.valueOf().toString();
     }
@@ -29,7 +27,7 @@ export default function generate(program) {
       return JSON.stringify(node.valueOf());
     }
     if (node instanceof Variable) {
-      return nameMap[node.name] ?? node.name;
+      return nameMap[node.name] || node.name;
     }
     if (node instanceof BinaryExp) {
       const L = genExpr(node.left);
@@ -87,3 +85,5 @@ export default function generate(program) {
   genStmt(program);
   return output.join("\n");
 }
+
+// Mostly drawn from How to write a compiler (cs.lmu.edu/~ray). Though some AI was used for troubleshooting and amplifying.

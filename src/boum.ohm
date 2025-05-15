@@ -11,65 +11,67 @@ Boum {
     | Block
     | CallStmt
 
-  PrintStmt  = print "(" Exp ")"
-  AssignStmt = Var "=" Exp
-  VarDec     = let id "=" Exp
-  WhileStmt  = while Exp ":" Block
-  Block      = "(" Stmt+ ")"
-  FunDec     = function id Params ReturnType? ":" Block
-  ReturnType = "->" Type
-  ReturnStmt = return Exp?
+  PrintStmt    = print "(" Exp ")"
+  AssignStmt   = Var "=" Exp
+  VarDec       = let id "=" Exp
+  WhileStmt    = while Exp ":" Block
+  Block        = "(" Stmt+ ")"
+  FunDec       = function id Params ReturnType? ":" Block
+  ReturnType   = "->" Type
+  ReturnStmt   = return Exp?
 
-  Params     = "(" ListOf<Param, ","> ")"
-  Param      = id ":" Type
-  Type       = Type "[]"                         --array
-             | id
+  Params       = "(" ListOf<Param, ","> ")"
+  Param        = id ":" Type
 
-  Exp        = Condition relop Condition         --binary
-             | Condition
+  Type         = Type_array | Type_id
+  Type_array   = Type_id "[]"
+  Type_id      = id
 
-  Condition  = Exp ("+"|"-") Term                --binary
-             | Term
+  Exp          = Condition relop Condition                               --binary
+               | Condition
 
-  Term       = Term ("*"|"/"|"%") Factor         --binary
-             | Factor
+  Condition    = Exp ("+"|"-") Term                                      --binary
+               | Term
 
-  Factor     = Primary "**" Factor               --binary
-             | ("!" | "-") Factor                --unary
-             | Primary
+  Term         = Term ("*"|"/"|"%") Factor                               --binary
+               | Factor
 
-  Primary    = Call
-             | Var
-             | Primary "[" Exp "]"               --subscript
-             | ArrayLiteral
-             | num
-             | strlit
-             | "true"                            --true
-             | "false"                           --false
-             | "(" Exp ")"                       --paren
+  Factor       = Primary "**" Factor                                     --binary
+               | ("!" | "-") Factor                                      --unary
+               | Primary
+
+  Primary      = Call
+               | Var
+               | Primary "[" Exp "]"                                     --subscript
+               | ArrayLiteral
+               | num
+               | strlit
+               | "true"                                                  --true
+               | "false"                                                 --false
+               | "(" Exp ")"                                             --paren
 
   ArrayLiteral = "[" ListOf<Exp, ","> "]"
 
-  Var        = Var "[" Exp "]"                   --subscript
-             | id                                --id
+  Var          = Var "[" Exp "]"                                          --subscript
+               | id                                                       --id
 
-  Call       = id "(" ListOf<Exp, ","> ")"
-  CallStmt   = Call
+  Call         = id "(" ListOf<Exp, ","> ")"
+  CallStmt     = Call
 
-  print      = "insa5" ~idchar | "ensa5" ~idchar
-  let        = "5al" ~idchar
-  while      = "6alama" ~idchar
-  function   = "dala" ~idchar
-  return     = "rd" | "rid"
-  true       = "true" ~idchar
-  false      = "false" ~idchar
+  print        = "insa5" ~idchar | "ensa5" ~idchar
+  let          = "5al" ~idchar
+  while        = "6alama" ~idchar
+  function     = "dala" ~idchar
+  return       = "rd" | "rid"
+  true         = "true" ~idchar
+  false        = "false" ~idchar
 
-  keyword    = print | let | while | function | return | true | false
+  keyword      = print | let | while | function | return | true | false
 
-  num        = digit+ ("." digit+)? (("E"|"e") ("+"|"-")? digit+)?
-  strlit     = "\"" char* "\""
-  char       = ~"\n" ~"\"" any
-  id         = ~keyword letter idchar*
-  idchar     = letter | digit | "_"
-  relop      = "<=" | "<" | "==" | "!=" | ">=" | ">"
+  num          = digit+ ("." digit+)? (("E"|"e") ("+"|"-")? digit+)?
+  strlit       = "\"" char* "\""
+  char         = ~"\n" ~"\"" any
+  id           = ~keyword letter idchar*
+  idchar       = letter | digit | "_"
+  relop        = "<=" | "<" | "==" | "!=" | ">=" | ">"
 }
