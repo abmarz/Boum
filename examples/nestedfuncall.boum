@@ -1,0 +1,9 @@
+dala double(x: num) -> num: (
+  rd x * 2
+)
+
+dala addDouble(a: num, b: num) -> num: (
+  rd double(a) + double(b)
+)
+
+insa5(addDouble(3, 4))

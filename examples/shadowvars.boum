@@ -1,0 +1,6 @@
+5al x = 1
+(
+  5al x = 2
+  insa5(x)
+)
+insa5(x)

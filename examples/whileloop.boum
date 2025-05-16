@@ -1,0 +1,5 @@
+5al i = 0
+6alama(i < 3): (
+  insa5(i)
+  i = i + 1
+)

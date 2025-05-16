@@ -1,0 +1,4 @@
+dala ten() -> num: (
+  rd 10
+)
+insa5(ten())

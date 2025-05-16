@@ -1,0 +1,5 @@
+dala calc() -> num:
+(
+  rd (1 + 2) * (3 + 4)
+)
+insa5(calc())

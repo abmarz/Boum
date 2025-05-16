@@ -1,0 +1,5 @@
+dala square(n: num) -> num:(
+  rd n * n
+)
+insa5(square(3))
+insa5(square(4))

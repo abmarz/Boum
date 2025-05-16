@@ -1,0 +1,5 @@
+dala greet(name: str): (
+  insa5("Hello")
+  insa5(name)
+)
+greet("Boum")

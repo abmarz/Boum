@@ -1,0 +1,4 @@
+dala printFirst(arr: num[]): (
+  insa5(arr[0])
+)
+printFirst([99, 100])

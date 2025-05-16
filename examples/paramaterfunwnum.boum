@@ -1,0 +1,4 @@
+dala add(x: num, y: num) -> num: (
+  rd x + y
+)
+insa5(add(3, 4))

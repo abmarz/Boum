@@ -1,0 +1,2 @@
+5al matrix = [[1, 2], [3, 4]]
+insa5(matrix[1][0])
