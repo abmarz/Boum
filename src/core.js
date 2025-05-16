@@ -52,8 +52,6 @@ export class ReturnStmt {
   }
 }
 
-// we might be missing something for the block here
-
 export class ArrayType {
   constructor(baseType) {
     Object.assign(this, { baseType });

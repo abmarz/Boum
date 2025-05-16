@@ -101,4 +101,4 @@ export default function optimize(node) {
   return node;
 }
 
-// AI help used in creating this optimizer. But mostly drawn from How to write a compiler (cs.lmu.edu/~ray/notes/)
+// In the spirit of academic honesty this is built off of How to write a compiler (cs.lmu.edu/~ray), and some AI tools such as copilot were used for troubleshooting and amplifying.

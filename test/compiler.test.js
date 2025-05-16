@@ -29,3 +29,5 @@ describe("The compiler", () => {
     assert.match(js, /console\.log\(x_1\);/);
   });
 });
+
+// In the spirit of academic honesty this is built off of How to write a compiler (cs.lmu.edu/~ray), and some AI tools such as copilot were used for troubleshooting and amplifying.

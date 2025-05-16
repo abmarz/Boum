@@ -13,8 +13,7 @@ const syntaxChecks = [
   ["nested arrays", `ensa5([[1], [2], [3]])`],
   ["variable declaration", `5al x = 10`],
   ["function declaration no params", `dala f(): (rd) `],
-  ["function with param", `dala f(x: int): (rd)`], // shouldn't it be `dala f(x: true): ->`?
-  //   ["function with return type", `dala f(): -> true:`], // shouldn't be accepted
+  ["function with param", `dala f(x: int): (rd)`],
   ["return number", `rid 42`],
   ["return boolean", `rid true`],
   ["return nothing", `rid`],
@@ -34,17 +33,14 @@ const syntaxChecks = [
   ["empty array", `ensa5([])`],
   ["array with booleans", `ensa5([true, false])`],
   ["strlit test", `ensa5("abc")`],
-  ["variable in function", `dala f(y: int): (rd 1)`], // try again this is the same as "function with param" test
-  ["multiple params", `dala f(x: int, y: int): (rd 1)`], // cant put true or false
+  ["variable in function", `dala f(y: int): (rd 1)`],
+  ["multiple params", `dala f(x: int, y: int): (rd 1)`],
   ["subscript access", `x[0] = 1`],
-  ["var subscript access", `ensa5(x[0])`], // what if this was ensa5(x[0])?
+  ["var subscript access", `ensa5(x[0])`],
   ["return expression", `rid x + 1`],
-  //   ["function call", `f(3)`], // shouldn't be accepted
-  //   ["nested function call", `f(g(3))`], // shouldn't be accepted
-  //   ["empty param call", `f()`], // shouldn't be accepted
   ["print with nested calls", `ensa5(f(g(3 + 1)))`],
   ["negation", `ensa5(-2)`],
-  ["negation can come second", `insa5(2 ** -2)`], // maybe we should have a test for ensa5(-(2 +3))
+  ["negation can come second", `insa5(2 ** -2)`],
 ];
 
 const syntaxErrors = [
@@ -55,30 +51,27 @@ const syntaxErrors = [
   ["incomplete number", `ensa5(5.)`, /col 9/],
   ["bad identifier", `5al a$b = 1`, / col 6/],
   ["double string close", `ensa5("abc"")`, / col 12/],
-  ["missing quote", `ensa5("abc)`, /col 12/], // here. What if we have a string with a quote?
+  ["missing quote", `ensa5("abc)`, /col 12/],
   ["invalid relop chain", `ensa5(2 < 3 < 4)`, /col 16/],
   ["operator without operand", `ensa5(3 +)`, /col 10/],
   ["multiple dots", `ensa5(3...5)`, /col 9/],
-  //   ["underscore in wrong place", `5al a_ = 1`, /col 6/], // here not working
   ["bracket without close", `ensa5([1, 2)`, /col 12/],
-  //   ["string escape error", `ensa5("a\\q")`, /col 10/], // here not working
   ["non-keyword true assign", `true = 1`, /col 1/],
   ["non-keyword false assign", `false = 0`, /col 1/],
-  ["call number", `500(1)`, /col 1/], // here shouldn't it be at col 2?
-  ["subscript number", `500[1]`, /col 1/], // here shouldn't it be at col 2?
-  ["property access on num", `500.x`, /col 1/], // here shouldn't it be at col 2?
+  ["call number", `500(1)`, /col 1/],
+  ["subscript number", `500[1]`, /col 1/],
+  ["property access on num", `500.x`, /col 1/],
   ["empty subscript", `x[]`, /col 3/],
   ["illegal array comma", `ensa5([1,,2])`, /col 10/],
   ["invalid idchar", `5al b@d = 3`, /col 6/],
   ["function with bad param", `dala f(x true):`, /col 10/],
-  ["type without id", `dala f(): -> []:`, /col 11/], // here i said col15
+  ["type without id", `dala f(): -> []:`, /col 11/],
   ["type without colon", `dala f(x true)`, /col 10/],
   ["bad return arrow", `dala f(): => true:`, /col 11/],
   ["illegal let", `let x = 1`, /col 5/],
   ["unfinished math", `ensa5(3 + )`, /col 11/],
   ["unfinished expression", `ensa5(3 *`, /col 10/],
   ["unfinished function call", `dala f(3,`, /col 8/],
-  //   ["non-boolean while", `6alama "yes":`, /col 8/], // here what if I said 6alama x > 2? Also not working
   ["array with trailing comma", `ensa5([1,2,])`, /col 12/],
   ["extra paren", `ensa5((3 + 4)) )`, /col 16/],
   ["missing function colon", `dala f()`, /col 9/],
@@ -87,7 +80,6 @@ const syntaxErrors = [
   ["multiple stars error", `ensa5(2 **** 3)`, /col 11/],
   ["weird idchar", `5al ab# = 1`, /col 7/],
   ["unterminated string", `ensa5("hello`, /col 13/],
-  // ["negation can not come first", "ensa5(-2 ** 2)", /col 11/],
 ];
 
 describe("The parser", () => {
@@ -103,3 +95,5 @@ describe("The parser", () => {
     });
   }
 });
+
+// In the spirit of academic honesty this is built off of How to write a compiler (cs.lmu.edu/~ray)

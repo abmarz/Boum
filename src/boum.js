@@ -1,7 +1,5 @@
-#! /usr/bin/env node
-
-import * as fs from "node:fs/promises";
 import stringify from "graph-stringify";
+import * as fs from "node:fs/promises";
 import compile from "./compiler.js";
 
 const help = `Boum compiler

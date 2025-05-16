@@ -15,3 +15,5 @@ export default function compile(source, outputType) {
   if (outputType === "optimized") return optimized;
   return generate(optimized);
 }
+
+// In the spirit of academic honesty this is built off of How to write a compiler (cs.lmu.edu/~ray).

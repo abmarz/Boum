@@ -381,4 +381,4 @@ export default function analyze(match) {
   return semantics(match).rep();
 }
 
-// Mostly drawn from How to write a compiler (cs.lmu.edu/~ray). Though some AI was used for troubleshooting and amplifying.
+// In the spirit of academic honesty this is built off of How to write a compiler (cs.lmu.edu/~ray), and some AI tools such as copilot were used for troubleshooting and amplifying.

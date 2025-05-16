@@ -3,7 +3,6 @@ import { describe, it } from "node:test";
 import * as core from "../src/core.js";
 import optimize from "../src/optimizer.js";
 
-// Make some test cases easier to read
 const i = new core.Variable("x", true, core.intType);
 const x = new core.Variable("x", true, core.floatType);
 const a = new core.Variable("a", true, new core.ArrayType(core.intType));
@@ -19,14 +18,11 @@ const identity = Object.assign(
   new core.Fun("id", [aParam], [returnX], anyToAny)
 );
 const voidInt = new core.Fun([], core.intType);
-const intFun = (body) => new core.Fun("f", [], body, voidInt);
-const intFunDecl = (body) => new core.FunDec(intFun(body));
 const callIdentity = (args) => new core.Call(identity, args);
 const times = (x, y) => new core.BinaryExp("*", x, y);
 const neg = (x) => new core.UnaryExp("-", x);
 const array = (...elements) => new core.ArrayExp(elements);
 const sub = (a, e) => new core.SubscriptExp(a, e);
-const unwrapElse = (o, e) => new core.BinaryExp("??", o, e);
 const program = new core.Program();
 
 const tests = [
@@ -273,3 +269,5 @@ describe("The optimizer", () => {
     });
   }
 });
+
+// In the spirit of academic honesty this is built off of How to write a compiler (cs.lmu.edu/~ray)

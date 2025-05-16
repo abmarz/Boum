@@ -1,11 +1,16 @@
 import {
+  ArrayExp,
   AssignStmt,
   BinaryExp,
+  Call,
+  FunDec,
   PrintStmt,
-  Program,
+  ReturnStmt,
+  SubscriptExp,
   UnaryExp,
   VarDec,
   Variable,
+  WhileStmt,
 } from "./core.js";
 
 export default function generate(program) {
@@ -44,16 +49,22 @@ export default function generate(program) {
       }
       return `${node.op}${operandStr}`;
     }
+    if (node instanceof Call) {
+      const args = node.args.map(genExpr).join(", ");
+      return `${node.fun}(${args})`;
+    }
+    if (node instanceof ArrayExp) {
+      const elems = node.elements.map(genExpr).join(", ");
+      return `[${elems}]`;
+    }
+    if (node instanceof SubscriptExp) {
+      return `${genExpr(node.array)}[${genExpr(node.subscript)}]`;
+    }
 
     throw new Error(`Unrecognized expression node in generator: ${node}`);
   }
 
   function genStmt(node) {
-    if (node instanceof Program) {
-      for (const stmt of node.statements) genStmt(stmt);
-      return;
-    }
-
     if (node instanceof VarDec) {
       const orig = node.variable.name;
       const cnt = (nameCounts[orig] || 0) + 1;
@@ -63,6 +74,12 @@ export default function generate(program) {
 
       const init = genExpr(node.initializer);
       output.push(`let ${uniq} = ${init};`);
+      return;
+    }
+
+    if (node instanceof Call) {
+      const args = node.args.map(genExpr).join(", ");
+      output.push(`${node.fun}(${args});`);
       return;
     }
 
@@ -78,12 +95,40 @@ export default function generate(program) {
       output.push(`console.log(${A});`);
       return;
     }
+    if (node instanceof ReturnStmt) {
+      let expr = "";
+      if (node.expression !== undefined && node.expression !== null) {
+        expr = genExpr(node.expression);
+      }
+      output.push(`return ${expr};`);
+      return;
+    }
+    if (node instanceof FunDec) {
+      const params = node.fun.params.map((p) => p.name).join(", ");
+      output.push(`function ${node.fun.name}(${params}) {`);
+      genStmt(node.body);
+      output.push("}");
+      return;
+    }
+    if (node instanceof WhileStmt) {
+      const test = genExpr(node.test);
+      output.push(`while (${test}) {`);
+      genStmt(node.body);
+      output.push("}");
+      return;
+    }
+    if (Array.isArray(node)) {
+      for (const stmt of node) genStmt(stmt);
+      return;
+    }
 
     throw new Error(`Unrecognized statement node in generator: ${node}`);
   }
 
-  genStmt(program);
+  for (const stmt of program.statements) {
+    genStmt(stmt);
+  }
   return output.join("\n");
 }
 
-// Mostly drawn from How to write a compiler (cs.lmu.edu/~ray). Though some AI was used for troubleshooting and amplifying.
+// In the spirit of academic honesty this is built off of How to write a compiler (cs.lmu.edu/~ray), and some AI tools such as copilot were used for troubleshooting and amplifying.

@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 import analyze from "../src/analyzer.js";
-import { PrintStmt, Program } from "../src/core.js";
+import { PrintStmt, Program, Variable } from "../src/core.js";
 import generate from "../src/generator.js";
 import optimize from "../src/optimizer.js";
 import parse from "../src/parser.js";
@@ -303,5 +303,93 @@ describe("The generator", () => {
     const prog = new Program([new PrintStmt(undefined)]);
     const js = generate(prog);
     assert.strictEqual(dedent(js), "console.log(undefined);");
+  });
+  it("falls back to original name when not renamed", () => {
+    const ast = new Program([new PrintStmt(new Variable("notRenamed", null))]);
+    const js = generate(ast);
+    assert.match(js, /console\.log\(notRenamed\)/);
+  });
+  it("generates function call", () => {
+    const ast = parse(`
+      dala greet(name: str): (
+        insa5(name)
+      )
+      greet("Bob")
+    `);
+    const js = generate(optimize(analyze(ast)));
+    assert.match(js, /greet\("Bob"\);/);
+  });
+  it("generates function declaration with return", () => {
+    const ast = parse(`
+      dala add(x: num, y: num) -> num: (
+        rd x + y
+      )
+    `);
+    const js = generate(optimize(analyze(ast)));
+    assert.match(js, /function add\(x, y\)/);
+    assert.match(js, /return x \+ y;/);
+  });
+  it("generates return statement", () => {
+    const ast = parse(`
+      dala ten() -> num: (
+        rd 10
+      )
+    `);
+    const js = generate(optimize(analyze(ast)));
+    assert.match(js, /return 10;/);
+  });
+  it("generates array literal", () => {
+    const ast = parse(`
+      5al nums = [1, 2, 3]
+      insa5(nums)
+    `);
+    const js = generate(optimize(analyze(ast)));
+    assert.match(js, /let nums_1 = \[1, 2, 3\];/);
+  });
+  it("generates array subscript", () => {
+    const ast = parse(`
+      5al nums = [4, 5]
+      insa5(nums[0])
+    `);
+    const js = generate(optimize(analyze(ast)));
+    assert.match(js, /console\.log\(nums_1\[0\]\);/);
+  });
+  it("generates while loop", () => {
+    const ast = parse(`
+      5al i = 0
+      6alama(i < 3): (
+        insa5(i)
+        i = i + 1
+      )
+    `);
+    const js = generate(optimize(analyze(ast)));
+    assert.match(js, /while \(i_1 < 3\)/);
+    assert.match(js, /console\.log\(i_1\);/);
+    assert.match(js, /i_1 = i_1 \+ 1;/);
+  });
+  it("generates function call as part of an expression", () => {
+    const ast = parse(`
+      dala double(x: num) -> num: (
+        rd x * 2
+      )
+      5al result = double(4)
+      insa5(result)
+    `);
+    const js = generate(optimize(analyze(ast)));
+    assert.match(js, /let result_1 = double\(4\);/);
+    assert.match(js, /console\.log\(result_1\);/);
+  });
+  it("generates block that returns an array of statements", () => {
+    const ast = parse(`
+      5al x = 0
+      6alama(x < 2): (
+        insa5(x)
+        x = x + 1
+      )
+    `);
+    const js = generate(optimize(analyze(ast)));
+    assert.match(js, /while \(x_1 < 2\)/);
+    assert.match(js, /console\.log\(x_1\);/);
+    assert.match(js, /x_1 = x_1 \+ 1;/);
   });
 });
