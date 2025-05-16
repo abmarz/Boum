@@ -1,0 +1,84 @@
+5al title = "large boum program"
+ensa5(title)
+
+5al nums = [2, 4, 6, 8, 10]
+5al more = [1, 3, 5, 7, 9]
+
+dala square(x: num) -> num: (
+  rd x * x
+)
+
+dala isOdd(n: num) -> bool: (
+  rd n % 2 != 0
+)
+
+dala printArray(arr: num[]) -> void: (
+  5al i = 0
+  6alama(i < 5): (
+    ensa5(arr[i])
+    i = i + 1
+  )
+)
+
+dala printSquares(arr: num[]) -> void: (
+  5al i = 0
+  6alama(i < 5): (
+    5al sq = square(arr[i])
+    ensa5(sq)
+    i = i + 1
+  )
+)
+
+dala countOdds(arr: num[]) -> num: (
+  5al count = 0
+  5al i = 0
+  6alama(i < 5): (
+    6alama(isOdd(arr[i])): (
+      count = count + 1
+    )
+    i = i + 1
+  )
+  rd count
+)
+
+dala sumArray(arr: num[]) -> num: (
+  5al i = 0
+  5al total = 0
+  6alama(i < 5): (
+    total = total + arr[i]
+    i = i + 1
+  )
+  rd total
+)
+
+ensa5("Numbers:")
+printArray(nums)
+
+ensa5("More Numbers:")
+printArray(more)
+
+ensa5("Squares of nums:")
+printSquares(nums)
+
+ensa5("Squares of more:")
+printSquares(more)
+
+5al oddCount = countOdds(more)
+ensa5("Odd numbers in more:")
+ensa5(oddCount)
+
+5al total1 = sumArray(nums)
+5al total2 = sumArray(more)
+ensa5("Sum of nums:")
+ensa5(total1)
+ensa5("Sum of more:")
+ensa5(total2)
+
+5al x = 10
+(
+  5al x = 42
+  ensa5("Shadowed x:")
+  ensa5(x)
+)
+ensa5("Original x:")
+ensa5(x)

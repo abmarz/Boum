@@ -1,0 +1,51 @@
+5al title = "medium boum program demo"
+5al nums = [3, 6, 9, 12, 15]
+
+ensa5(title)
+
+dala divisibleBy3(n: num) -> bool: (
+  rd n % 3 == 0
+)
+
+dala square(x: num) -> num: (
+  rd x * x
+)
+
+dala sum(a: num, b: num) -> num: (
+  rd a + b
+)
+
+dala printArray(arr: num[]) -> void: (
+  5al i = 0
+  6alama(i < 5): (
+    ensa5(arr[i])
+    i = i + 1
+  )
+)
+
+dala printSquares(arr: num[]) -> void: (
+  5al i = 0
+  6alama(i < 5): (
+    ensa5(square(arr[i]))
+    i = i + 1
+  )
+)
+
+dala countDiv3(arr: num[]) -> num: (
+  5al count = 0
+  5al i = 0
+  6alama(i < 5): (
+    6alama(divisibleBy3(arr[i])): (
+      count = count + 1
+    )
+    i = i + 1
+  )
+  rd count
+)
+
+printArray(nums)
+printSquares(nums)
+
+5al divCount = countDiv3(nums)
+ensa5("Divisible by 3:")
+ensa5(divCount)

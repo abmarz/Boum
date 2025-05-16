@@ -1,0 +1,102 @@
+5al greeting = "Welcome to Boum!"
+5al nums = [1, 2, 3, 4, 5]
+5al moreNums = [10, 20, 30, 40, 50]
+
+ensa5(greeting)
+ensa5("Let's begin processing...")
+
+dala square(x: num) -> num: (
+  rd x * x
+)
+
+dala sum(a: num, b: num) -> num: (
+  rd a + b
+)
+
+dala multiply(a: num, b: num) -> num: (
+  rd a * b
+)
+
+dala isEven(n: num) -> bool: (
+  rd n % 2 == 0
+)
+
+dala printAll(arr: num[]) -> void: (
+  5al i = 0
+  6alama(i < 5): (
+    ensa5(arr[i])
+    i = i + 1
+  )
+)
+
+dala printSquares(arr: num[]) -> void: (
+  5al i = 0
+  6alama(i < 5): (
+    5al sq = square(arr[i])
+    ensa5(sq)
+    i = i + 1
+  )
+)
+
+dala countEvens(arr: num[]) -> num: (
+  5al i = 0
+  5al count = 0
+  6alama(i < 5): (
+    6alama(isEven(arr[i])): (
+      count = count + 1
+    )
+    i = i + 1
+  )
+  rd count
+)
+
+dala sumArray(arr: num[]) -> num: (
+  5al i = 0
+  5al total = 0
+  6alama(i < 5): (
+    total = total + arr[i]
+    i = i + 1
+  )
+  rd total
+)
+
+5al x = 10
+(
+  5al x = 20
+  ensa5("Inner x:")
+  ensa5(x)
+)
+ensa5("Outer x:")
+ensa5(x)
+
+ensa5("Array nums:")
+printAll(nums)
+
+ensa5("Array moreNums:")
+printAll(moreNums)
+
+ensa5("Squares of nums:")
+printSquares(nums)
+
+ensa5("Squares of moreNums:")
+printSquares(moreNums)
+
+5al total1 = sumArray(nums)
+5al total2 = sumArray(moreNums)
+ensa5("Sum of nums:")
+ensa5(total1)
+ensa5("Sum of moreNums:")
+ensa5(total2)
+
+5al evens1 = countEvens(nums)
+5al evens2 = countEvens(moreNums)
+ensa5("Evens in nums:")
+ensa5(evens1)
+ensa5("Evens in moreNums:")
+ensa5(evens2)
+
+5al combo = sum(square(3), square(4))
+ensa5("Sum of squares of 3 and 4:")
+ensa5(combo)
+
+ensa5("Processing complete.")

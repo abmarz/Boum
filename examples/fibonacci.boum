@@ -1,0 +1,21 @@
+dala fib(n: num) -> num: (
+  6alama(n <= 1): (
+    rd n
+  )
+
+  5al a = 0
+  5al b = 1
+  5al i = 2
+
+  6alama(i <= n): (
+    5al next = a + b
+    a = b
+    b = next
+    i = i + 1
+  )
+  rd b
+)
+
+5al result = fib(60)
+ensa5("Fibonacci number at position 60:")
+ensa5(result)

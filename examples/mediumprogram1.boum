@@ -1,0 +1,41 @@
+5al message = "Hello from Boum!"
+ensa5(message)
+
+5al nums = [1, 2, 3, 4, 5]
+ensa5(nums[2])
+
+dala square(x: num) -> num: (
+  rd x * x
+)
+
+dala printAll(arr: num[]) -> void: (
+  5al i = 0
+  6alama(i < 5): (
+    ensa5(arr[i])
+    i = i + 1
+  )
+)
+
+printAll(nums)
+
+dala sum(a: num, b: num) -> num: (
+  5al result = a + b
+  rd result
+)
+
+5al result = sum(10, 20)
+ensa5(result)
+
+dala isEven(x: num) -> bool: (
+  rd x % 2 == 0
+)
+
+ensa5(isEven(4))
+ensa5(isEven(5))
+
+5al x = 10
+(
+  5al x = 20
+  ensa5(x)
+)
+ensa5(x)

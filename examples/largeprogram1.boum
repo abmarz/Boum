@@ -1,0 +1,85 @@
+5al intro = "Alternate 75-Line Boum Program"
+ensa5(intro)
+
+5al data = [5, 10, 15, 20, 25]
+5al factors = [2, 4, 6, 8, 10]
+
+ensa5("Data values:")
+ensa5(data[0])
+ensa5(data[1])
+ensa5(data[2])
+ensa5(data[3])
+ensa5(data[4])
+
+dala double(x: num) -> num: (
+  rd x * 2
+)
+
+dala average(arr: num[]) -> num: (
+  5al total = 0
+  5al i = 0
+  6alama(i < 5): (
+    total = total + arr[i]
+    i = i + 1
+  )
+  rd total / 5
+)
+
+dala printAbove(arr: num[], threshold: num) -> void: (
+  5al i = 0
+  6alama(i < 5): (
+    6alama(arr[i] > threshold): (
+      ensa5(arr[i])
+    )
+    i = i + 1
+  )
+)
+
+dala maxOfFive(arr: num[]) -> num: (
+  5al max = arr[0]
+  5al i = 1
+  6alama(i < 5): (
+    6alama(arr[i] > max): (
+      max = arr[i]
+    )
+    i = i + 1
+  )
+  rd max
+)
+
+dala printReverse(arr: num[]) -> void: (
+  5al i = 4
+  6alama(i >= 0): (
+    ensa5(arr[i])
+    i = i - 1
+  )
+)
+
+dala multArrays(a: num[], b: num[]) -> void: (
+  5al i = 0
+  6alama(i < 5): (
+    ensa5(a[i] * b[i])
+    i = i + 1
+  )
+)
+
+ensa5("Doubled values of data:")
+ensa5(double(data[0]))
+ensa5(double(data[1]))
+
+ensa5("Average of data:")
+ensa5(average(data))
+
+ensa5("Values above 12 in data:")
+printAbove(data, 12)
+
+ensa5("Maximum in data:")
+ensa5(maxOfFive(data))
+
+ensa5("Reversed data:")
+printReverse(data)
+
+ensa5("Element-wise multiplication:")
+multArrays(data, factors)
+
+ensa5("Done.")

@@ -46,7 +46,29 @@ This language is a modern version of that journey. A voyage, but in code.
 
 ---
 
-## Some Code Examples
+## Some Cool 😎 Code Examples
+
+### 📌 Fibonacci Sequence (first 10 digits)
+
+```boum
+5al a = 0
+5al b = 1
+
+ensa5(a)
+ensa5(b)
+
+5al i = 2
+
+6alama(i < 10): (
+  5al next = a + b
+  ensa5(next)
+  a = b
+  b = next
+  i = i + 1
+)
+```
+
+_Boum’s version of a function that prints out the first 10 digits of the Fibonacci Sequence. Wanna see something cooler? Head on to our examples and find the example file marked `fibonacci.boum`. This file contains a Boum function that takes in an nth input and gives you the nth digit in the Fibonacci Sequence! That is, it will output the JS version that you can just place in an online program interpreter like [TiO](https://tio.run/#javascript-node) and see the result_ 😁
 
 ### 📌 Variable Declaration and Print
 
@@ -82,9 +104,9 @@ _This defines a function using `dala`, Arabic for "function". It takes two numbe
 )
 ```
 
-_The Boum keyword `6alama` means "as long as", making loops read like a story._
+_The Boum keyword `6alama` means "as long as" in arabic, making loops read like a story. The arabic language strikes again!_
 
-### & Many many more that you can find inside the examples folder! See the next section on how to run them! 👇 👇 👇
+### 📌 & many many more that you can find inside the examples folder! See the next section on how to run them! 👇 👇 👇
 
 ---
 
@@ -128,7 +150,7 @@ test/
 
 ---
 
-## 💡 Inspiration
+## 💡 Inspiration Statement
 
 > _“They [our ancestors] charted a course with sails and stars. We're doing it with syntax and semicolons.”_
 
@@ -136,12 +158,12 @@ test/
 
 ## Authors
 
-Abdullah Al Marzouq and Ali Al Aryan
+**Abdullah Al Marzouq** + **Ali Al Aryan**
 
 ---
 
-## Credits
+## Acknowledgements
 
-[Dr. Toal!](https://github.com/rtoal)
+[Dr. Toal!](https://github.com/rtoal) No seriously you deserve much more than a thank you Dr. Toal. We couldn’t have done this without your help and flexibility. Can't believe this is our last class with you ever, we're going to miss you ❤️
 
 ---
